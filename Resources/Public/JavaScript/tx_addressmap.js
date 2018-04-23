@@ -1,13 +1,17 @@
-window.onload = function(){
+$(window).on("load", function (e) {
 	initialize();
-}
+});
+
+var _mcController = null;
 
 $(document).ready(function() {
 
-	var siteid = $('#tx_staddressmap_addresslist_pageid').html();
+	_mcController = mcController();
+
+	var siteid      = $('#tx_staddressmap_addresslist_pageid').html();
 	var ajaxtypenum = $('#tx_staddressmap_addresslist_ajaxtypenum').html();
 
-		$('.tx_staddressmap_select').change(function(){
+	$('.tx_staddressmap_select').change(function(){
 		var tablefield = this.id.split('_');
 
 		$.get('index.php?id='+siteid+'&type='+ajaxtypenum+'&ts='+Date.parse(new Date()) + new Date().getMilliseconds(),{
@@ -81,7 +85,8 @@ $(document).ready(function() {
 		},
 		function(data){
 			$('#tx_staddressmap_addresslist_'+$('#tx_staddressmap_cid').val()).html(data);
-			setTimeout(function(){ show_marker(0); },500);
+			// setTimeout(function(){ show_marker(0); },10);
+			show_marker(0);
 		});
 	}
 
@@ -114,6 +119,31 @@ $(document).ready(function() {
 	}
 });
 
+function mcController() {
+	var self = {
+		ref : null,
+		options : {
+			gridSize : 60,
+			maxZoom : 10,
+			styles : [
+				{ url: '../fileadmin/templates/_net/img/marker.png', height: 50,width: 50, textColor: '#ffffff' },
+				{ url: '../fileadmin/templates/_net/img/marker.png', height: 50,width: 50, textColor: '#ffffff' },
+				{ url: '../fileadmin/templates/_net/img/marker.png', height: 50,width: 50, textColor: '#ffffff' }
+			]
+		},
+		init : function() {
+		},
+		setMarker : function(_marker, _map) {
+			if(!_noclusterer) {
+				self.ref = new MarkerClusterer(_map, _marker, self.options);
+			}
+		}
+	};
+	self.init();
+	return {
+		setMarker : self.setMarker
+	}
+}
 
 function is_array(value) {
 	if (typeof value === 'object' && value && value instanceof Array) {
@@ -164,11 +194,13 @@ function createMarker(name, latlng){
 		map: map,
 		icon: icon
 	});
+	
+	
 	google.maps.event.addListener(marker, "click", function(){
 		if (infowindow)
 			infowindow.close();
 		infowindow = new google.maps.InfoWindow({
-			content: name
+			content: $( '#'+name ).html()
 		});
 		infowindow.open(map, marker);
 	});
@@ -183,14 +215,19 @@ function show_marker(id){
 	if(circle != null) circle.setMap(null);
 	if(circledata) circle = new google.maps.Circle(circledata);
 
+	var _markers = [];
+	var $addresslist_items = $('.tx_staddressmap_addresslist_item');
+
 	if(marker.length > 0) {
 		map.setCenter(new google.maps.LatLng(centerpoints[id].lat, centerpoints[id].lng));
 		map.setZoom(detailzoom[id]);
 		for (var i = 0; i < marker[id].length; i++) {
 			var latlng = new google.maps.LatLng(marker[id][i].lat, marker[id][i].lng);
-			map.addMarker(createMarker(marker[id][i].name, latlng));
+			_markers.push(createMarker($addresslist_items.eq(i).html(), latlng));
+			if( _noclusterer ) map.addMarker(createMarker(marker[id][i].name, latlng));
 			while (map.getBounds().contains(latlng) == false) map.setZoom(--detailzoom[id]);
 		}
+		_mcController.setMarker(_markers, map);
 	}
 }
 

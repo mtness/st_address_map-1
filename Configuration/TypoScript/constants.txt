@@ -1,4 +1,4 @@
-plugin.tx_staddressmap_pi1 {
+plugin.tx_staddressmap {
 	bubblelayout {
 		# cat=Addressmap - Bubblelayout//0010; type=wrap; label= allWrap
 		wrap = <table class="bubble">|</table>
@@ -54,7 +54,7 @@ plugin.tx_staddressmap_pi1 {
 	# cat=Addressmap - Settings//0010; type=string; label= templateFile
 	templateFile = EXT:st_address_map/static/template.html
 	# cat=Addressmap - Settings//0020; type=string; label= tablefields: You can add various other tt_address table fields to use them as markers in the templateFile (###YOURFIELD###).
-	tablefields =  first_name, last_name, phone, address, zip, city, region, country, description
+	tablefields =  name, first_name, last_name, phone, address, zip, city, region, country, description, email, www
 	# cat=Addressmap - Settings//0030; type=string; label= bubblefields: Add the tt_address table fields, which shall be shown in the bubble.
 	bubblefields =  name, address, zip, city, phone
 	# cat=Addressmap - Settings//0040; type=string; label= dropdownfields

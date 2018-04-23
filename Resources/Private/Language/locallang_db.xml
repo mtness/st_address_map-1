@@ -15,6 +15,7 @@
 			<label index="start_zoom">Start zoom</label>
 			<label index="detail_zoom">Detail zoom</label>
 			<label index="center_coordinates">Center coordinates</label>
+			<label index="noclusterer">Cluster Results</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="tt_content.list_type_pi1">Adressenvisualisierung mit Google Maps und tt_address</label>
